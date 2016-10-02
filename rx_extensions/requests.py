@@ -16,3 +16,7 @@ def rx_request(method, url, **kwargs):
         return lambda: None
 
     return rx.Observable.create(subscribe)
+
+
+def rx_json_request(method, url, **kwargs):
+    return rx_request(method, url, **kwargs).map(lambda r: r.json())
