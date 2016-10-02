@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from operator import itemgetter
 
 import funcy
 import rx
@@ -24,16 +24,18 @@ class HireableFinder:
             .flat_map_latest(self.__hireable)
 
     def __contributors(self, repos):
-        return rx.Observable.concat(
-            list(map(self.github.rx_contributors, repos))) \
+        contributors = list(map(self.github.rx_contributors, repos))
+
+        return rx.Observable.concat(contributors) \
             .buffer_with_count(len(repos)) \
             .map(funcy.flatten) \
             .map(funcy.partial(funcy.pluck, 'login'))
 
     def __sort(self, contributors):
-        return OrderedDict(
-            sorted(funcy.count_by(funcy.identity, contributors).items(),
-                   key=lambda i: i[1], reverse=True)).keys()
+        contribs = funcy.count_by(None, contributors).items()
+        sorted_contribs = sorted(contribs, key=itemgetter(1), reverse=True)
+
+        return funcy.lmap(0, sorted_contribs)
 
     def __hireable(self, logins):
         return rx.Observable.concat(
