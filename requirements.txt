@@ -1,3 +1,5 @@
 coverage==4.2
 funcy==1.7.1
 green==2.5.1
+requests==2.11.1
+Rx==1.5.2
