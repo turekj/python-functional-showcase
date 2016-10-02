@@ -73,7 +73,7 @@ class TestHireableFinder(unittest.TestCase):
             nonlocal result
             result = r
 
-        self.sut.find_hireable('turekj').subscribe(on_next=on_next)
+        self.sut.rx_find_hireable('turekj').subscribe(on_next=on_next)
 
         self.assertEqual(['ninja_coder', 'octocat'], result)
         self.github_service.rx_starred_repositories.assert_called_once_with(
