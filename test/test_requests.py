@@ -4,7 +4,7 @@ from unittest.mock import patch, MagicMock
 import requests
 import rx
 
-from rx_extensions.requests import rx_request, rx_json_request
+from rx_extensions.requests import rx_request, rx_json
 
 
 class TestRxRequest(unittest.TestCase):
@@ -109,7 +109,7 @@ class TestRxJSONRequest(unittest.TestCase):
         """
         Test that rx_json_request should pass all params to request.
         """
-        r = rx_json_request('POST', 'http://google.com', p='v')
+        r = rx_json('POST', 'http://google.com', p='v')
 
         r.subscribe(on_next=lambda _: None)
 
@@ -131,7 +131,7 @@ class TestRxJSONRequest(unittest.TestCase):
         value.json.return_value = {'json': 'dict'}
         observable = rx.Observable.from_([value])
         request.return_value = observable
-        r = rx_json_request('GET', 'http://google.com')
+        r = rx_json('GET', 'http://google.com')
 
         r.subscribe(on_next=on_next)
 
@@ -152,7 +152,7 @@ class TestRxJSONRequest(unittest.TestCase):
         value = MagicMock()
         observable = rx.Observable.from_([value])
         request.return_value = observable
-        r = rx_json_request('POST', 'http://google.com', p='v')
+        r = rx_json('POST', 'http://google.com', p='v')
 
         r.subscribe(on_error=on_error)
 
@@ -174,7 +174,7 @@ class TestRxJSONRequest(unittest.TestCase):
         value.json.side_effect = ValueError
         observable = rx.Observable.from_([value])
         request.return_value = observable
-        r = rx_json_request('POST', 'http://google.com', p='v')
+        r = rx_json('POST', 'http://google.com', p='v')
 
         r.subscribe(on_error=on_error)
 

@@ -18,5 +18,5 @@ def rx_request(method, url, **kwargs):
     return rx.Observable.create(subscribe)
 
 
-def rx_json_request(method, url, **kwargs):
+def rx_json(method, url, **kwargs):
     return rx_request(method, url, **kwargs).map(lambda r: r.json())
