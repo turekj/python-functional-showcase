@@ -33,3 +33,17 @@ class TestGithub(unittest.TestCase):
         self.assertEqual([{'id': 123}], result)
         rx_get_json.assert_called_once_with(
             'https://api.github.com/users/octocat/starred')
+
+    @patch('service.github.rx_get_json')
+    def test_contributors(self, rx_get_json):
+        """
+        Test that rx_contributors issues correct request.
+        """
+        rx_get_json.return_value = [{'id': 444}]
+
+        result = self.sut.rx_contributors('violet-org/boysenberry-repo')
+
+        self.assertEqual([{'id': 444}], result)
+        rx_get_json.assert_called_once_with(
+            'https://api.github.com/repos/violet-org/'
+            'boysenberry-repo/contributors')
