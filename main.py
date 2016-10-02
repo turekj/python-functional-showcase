@@ -11,7 +11,7 @@ def main():
 
     login = input("Provide user login: ")
 
-    print("Hireable: \n")
+    print("\nCalculating hireables...\n\n")
     hireable_finder.rx_find_hireable(login).subscribe(
         on_next=print_hireable,
         on_completed=on_hireables_printed)
