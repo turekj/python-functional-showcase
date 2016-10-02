@@ -36,10 +36,10 @@ class HireableFinder:
             .map(funcy.partial(funcy.pluck, 'login'))
 
     def contributors_sorted_by_repos_contributed_in(self, contributors):
-        contribs = funcy.count_by(None, contributors).items()
-        sorted_contribs = sorted(contribs, key=itemgetter(1), reverse=True)
+        users_by_repos = funcy.count_by(None, contributors).items()
+        sorted_users = sorted(users_by_repos, key=itemgetter(1), reverse=True)
 
-        return funcy.lmap(0, sorted_contribs)
+        return funcy.lmap(0, sorted_users)
 
     def filter_hireable_users(self, users):
         return rx.Observable.concat(
