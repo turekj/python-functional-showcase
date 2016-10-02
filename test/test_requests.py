@@ -4,7 +4,7 @@ from unittest.mock import patch, MagicMock
 import requests
 import rx
 
-from rx_extensions.requests import rx_request, rx_json
+from rx_extensions.requests import rx_request, rx_json, rx_get_json
 
 
 class TestRxRequest(unittest.TestCase):
@@ -103,7 +103,7 @@ class TestRxRequest(unittest.TestCase):
         self.assertIsInstance(error, ValueError)
 
 
-class TestRxJSONRequest(unittest.TestCase):
+class TestRxJSON(unittest.TestCase):
     @patch('rx_extensions.requests.rx_request')
     def test_that_json_request_should_pass_params_to_request(self, request):
         """
@@ -179,3 +179,15 @@ class TestRxJSONRequest(unittest.TestCase):
         r.subscribe(on_error=on_error)
 
         self.assertIsInstance(error, ValueError)
+
+
+class TestRXGetJSON(unittest.TestCase):
+    @patch('rx_extensions.requests.rx_json')
+    def test_that_method_should_forward_the_call_to_rx_json(self, rx_json_stub):
+        rx_json_stub.return_value = 'RX_JSON_RETURN_VALUE'
+
+        result = rx_get_json('some_url', arg1=1, arg2='2')
+
+        rx_json_stub.assert_called_once_with('get', 'some_url', arg1=1,
+                                             arg2='2')
+        self.assertEqual('RX_JSON_RETURN_VALUE', result)

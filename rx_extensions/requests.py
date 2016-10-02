@@ -20,3 +20,7 @@ def rx_request(method, url, **kwargs):
 
 def rx_json(method, url, **kwargs):
     return rx_request(method, url, **kwargs).map(lambda r: r.json())
+
+
+def rx_get_json(url, **kwargs):
+    return rx_json('get', url, **kwargs)
