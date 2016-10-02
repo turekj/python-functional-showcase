@@ -26,9 +26,9 @@ class TestHireableFinder(unittest.TestCase):
             },
         }
         self.repositories = [
-            {'id': 1, 'name': 'lame_guy/not-worth-a-penny-software'},
-            {'id': 2, 'name': 'overpaid-experts/hello-world-printer'},
-            {'id': 3, 'name': 'anonymous/facebook-scanner'},
+            {'id': 1, 'full_name': 'lame_guy/not-worth-a-penny-software'},
+            {'id': 2, 'full_name': 'overpaid-experts/hello-world-printer'},
+            {'id': 3, 'full_name': 'anonymous/facebook-scanner'},
         ]
         self.contributors = {
             'lame_guy/not-worth-a-penny-software': [
@@ -73,7 +73,7 @@ class TestHireableFinder(unittest.TestCase):
             nonlocal result
             result = r
 
-        self.sut.find_hireable('turekj').subscribe(on_next=on_next)
+        self.sut.rx_find_hireable('turekj').subscribe(on_next=on_next)
 
         self.assertEqual(['ninja_coder', 'octocat'], result)
         self.github_service.rx_starred_repositories.assert_called_once_with(
