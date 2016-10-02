@@ -26,9 +26,9 @@ class TestHireableFinder(unittest.TestCase):
             },
         }
         self.repositories = [
-            {'id': 1, 'name': 'lame_guy/not-worth-a-penny-software'},
-            {'id': 2, 'name': 'overpaid-experts/hello-world-printer'},
-            {'id': 3, 'name': 'anonymous/facebook-scanner'},
+            {'id': 1, 'full_name': 'lame_guy/not-worth-a-penny-software'},
+            {'id': 2, 'full_name': 'overpaid-experts/hello-world-printer'},
+            {'id': 3, 'full_name': 'anonymous/facebook-scanner'},
         ]
         self.contributors = {
             'lame_guy/not-worth-a-penny-software': [

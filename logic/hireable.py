@@ -2,7 +2,6 @@ from collections import OrderedDict
 
 import funcy
 import rx
-import rx.testing.dump
 
 from service.github import GithubService
 
@@ -18,11 +17,10 @@ class HireableFinder:
 
     def rx_find_hireable(self, initial_user):
         return self.github.rx_starred_repositories(initial_user) \
-            .map(funcy.partial(funcy.lpluck, 'name')) \
+            .map(funcy.partial(funcy.lpluck, 'full_name')) \
             .flat_map_latest(self.__contributors) \
             .map(funcy.rpartial(funcy.without, initial_user)) \
             .map(self.__sort) \
-            .dump() \
             .flat_map_latest(self.__hireable)
 
     def __contributors(self, repos):
