@@ -2,30 +2,23 @@ from logic.hireable import HireableFinder
 from service.github import GithubService
 
 
-printed_hireable_count = 0
-
-
 def main():
     github_service = GithubService()
     hireable_finder = HireableFinder(github_service)
 
     login = input("Provide user login: ")
 
-    print("\nCalculating hireables...\n\n")
-    hireable_finder.rx_find_hireable(login).subscribe(
-        on_next=print_hireable,
-        on_completed=on_hireables_printed)
+    print("\nCalculating hireables...\n")
+
+    hireable_finder.rx_find_hireable(login).subscribe(on_next=print_hireables)
 
 
-def print_hireable(hireable):
-    global printed_hireable_count
-    print("{0}. {1}\n".format(printed_hireable_count + 1, hireable))
-    printed_hireable_count += 1
+def print_hireables(hireables):
+    hireables_str = '\n'.join(
+        map(lambda l: '{0}. {1}'.format(l[0] + 1, l[1]),
+            enumerate(hireables)))
 
-
-def on_hireables_printed():
-    global printed_hireable_count
-    printed_hireable_count = 0
+    print(hireables_str)
 
 
 if __name__ == '__main__':

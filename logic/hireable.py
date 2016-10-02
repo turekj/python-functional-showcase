@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from operator import itemgetter
 
 import funcy
 import rx
@@ -6,6 +6,7 @@ import rx
 from service.github import GithubService
 
 
+# noinspection PyMethodMayBeStatic
 class HireableFinder:
     """
     Finds hireable Github users.
@@ -16,28 +17,33 @@ class HireableFinder:
         self.github = github_service
 
     def rx_find_hireable(self, initial_user):
-        return self.github.rx_starred_repositories(initial_user) \
-            .map(funcy.partial(funcy.lpluck, 'full_name')) \
-            .flat_map_latest(self.__contributors) \
+        return self.starred_repo_names(initial_user) \
+            .flat_map_latest(self.contributor_logins) \
             .map(funcy.rpartial(funcy.without, initial_user)) \
-            .map(self.__sort) \
-            .flat_map_latest(self.__hireable)
+            .map(self.contributors_sorted_by_repos_contributed_in) \
+            .flat_map_latest(self.filter_hireable_users)
 
-    def __contributors(self, repos):
-        return rx.Observable.concat(
-            list(map(self.github.rx_contributors, repos))) \
+    def starred_repo_names(self, user):
+        return self.github.rx_starred_repositories(user) \
+            .map(funcy.partial(funcy.lpluck, 'full_name'))
+
+    def contributor_logins(self, repos):
+        contributors = funcy.lmap(self.github.rx_contributors, repos)
+
+        return rx.Observable.concat(contributors) \
             .buffer_with_count(len(repos)) \
             .map(funcy.flatten) \
             .map(funcy.partial(funcy.pluck, 'login'))
 
-    def __sort(self, contributors):
-        return OrderedDict(
-            sorted(funcy.count_by(funcy.identity, contributors).items(),
-                   key=lambda i: i[1], reverse=True)).keys()
+    def contributors_sorted_by_repos_contributed_in(self, contributors):
+        contribs = funcy.count_by(None, contributors).items()
+        sorted_contribs = sorted(contribs, key=itemgetter(1), reverse=True)
 
-    def __hireable(self, logins):
+        return funcy.lmap(0, sorted_contribs)
+
+    def filter_hireable_users(self, users):
         return rx.Observable.concat(
-            list(map(self.github.rx_user_details, logins))) \
-            .buffer_with_count(len(logins)) \
+            list(map(self.github.rx_user_details, users))) \
+            .buffer_with_count(len(users)) \
             .map(funcy.partial(funcy.where, hireable=True)) \
             .map(funcy.partial(funcy.lpluck, 'login'))
